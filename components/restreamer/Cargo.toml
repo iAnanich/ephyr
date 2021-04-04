@@ -46,10 +46,10 @@ uuid = { version = "0.8", features = ["serde", "v4"] }
     features = ["fs", "io-util", "process", "rt-core", "stream", "sync", "time"]
 [dependencies.tsclientlib]
     git = "https://github.com/ReSpeak/tsclientlib"
-    rev = "ee95d775ad6dda552847bf9f484ab3ff1a70f833" # branch = "master"
+    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
 [dependencies.tsproto-packets]
     git = "https://github.com/ReSpeak/tsclientlib"
-    rev = "ee95d775ad6dda552847bf9f484ab3ff1a70f833" # branch = "master"
+    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
 [dependencies.zeromq]
     git = "https://github.com/zeromq/zmq.rs"
     rev = "5bc792a5b8876d7281e9bd933519d49a62b76caf" # tokio = "0.2"
