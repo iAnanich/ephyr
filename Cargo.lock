@@ -341,15 +341,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "addr2line"
-version = "0.14.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a55f82cfe485775d02112886f4169bde0c5894d75e79ead7eafe7e40a25e45f7"
-dependencies = [
- "gimli",
-]
-
-[[package]]
 name = "adler"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -585,20 +576,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "backtrace"
-version = "0.3.56"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d117600f438b1707d4e4ae15d3595657288f8235a0eb593e80ecc98ab34e1bc"
-dependencies = [
- "addr2line",
- "cfg-if 1.0.0",
- "libc",
- "miniz_oxide",
- "object",
- "rustc-demangle",
-]
-
-[[package]]
 name = "base-x"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -813,7 +790,7 @@ dependencies = [
  "ansi_term",
  "atty",
  "bitflags",
- "strsim",
+ "strsim 0.8.0",
  "textwrap",
  "unicode-width",
  "vec_map",
@@ -1100,6 +1077,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "darling"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d706e75d87e35569db781a9b5e2416cff1236a47ed380831f959382ccd5f858"
+dependencies = [
+ "darling_core",
+ "darling_macro",
+]
+
+[[package]]
+name = "darling_core"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0c960ae2da4de88a91b2d920c2a7233b400bc33cb28453a2987822d8392519b"
+dependencies = [
+ "fnv",
+ "ident_case",
+ "proc-macro2",
+ "quote 1.0.9",
+ "strsim 0.9.3",
+ "syn 1.0.68",
+]
+
+[[package]]
+name = "darling_macro"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9b5a2f4ac4969822c62224815d069952656cadc7084fdca9751e6d959189b72"
+dependencies = [
+ "darling_core",
+ "quote 1.0.9",
+ "syn 1.0.68",
+]
+
+[[package]]
 name = "dashmap"
 version = "3.11.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1132,6 +1144,42 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "51f59c66c30bb7445c8320a5f9233e437e3572368099f25532a59054328899b4"
 dependencies = [
  "const-oid",
+]
+
+[[package]]
+name = "derivative"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.9",
+ "syn 1.0.68",
+]
+
+[[package]]
+name = "derive_builder"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2658621297f2cf68762a6f7dc0bb7e1ff2cfd6583daef8ee0fed6f7ec468ec0"
+dependencies = [
+ "darling",
+ "derive_builder_core",
+ "proc-macro2",
+ "quote 1.0.9",
+ "syn 1.0.68",
+]
+
+[[package]]
+name = "derive_builder_core"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2791ea3e372c8495c0bc2033991d76b512cd799d07491fbd6890124db9458bef"
+dependencies = [
+ "darling",
+ "proc-macro2",
+ "quote 1.0.9",
+ "syn 1.0.68",
 ]
 
 [[package]]
@@ -1192,6 +1240,18 @@ name = "discard"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "212d0f5754cb6769937f4501cc0e67f4f4483c8d2c3e1e922ee9edbe4ab4c7c0"
+
+[[package]]
+name = "dns-lookup"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb4c5ce3a7034c5eb66720bb16e9ac820e01b29032ddc06dd0fe47072acf7454"
+dependencies = [
+ "cfg-if 1.0.0",
+ "libc",
+ "socket2 0.4.0",
+ "winapi 0.3.9",
+]
 
 [[package]]
 name = "eax"
@@ -1337,7 +1397,8 @@ dependencies = [
  "serde_json",
  "smart-default",
  "structopt",
- "tokio 0.2.25",
+ "tokio 1.4.0",
+ "tokio-stream",
  "tsclientlib",
  "tsproto-packets",
  "url",
@@ -1383,7 +1444,7 @@ dependencies = [
  "structopt",
  "tempfile",
  "tokio 0.2.25",
- "tokio-util 0.3.1",
+ "tokio-util 0.6.5",
  "url",
 ]
 
@@ -1640,12 +1701,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gimli"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6503fe142514ca4799d4c26297c4248239fe8838d827db6bd6065c6ed29a6ce"
-
-[[package]]
 name = "git-testament"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1887,6 +1942,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-system-resolver"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12f3e7696766b62825bf735a1df9d8b727525b83ae5427ee955258800858bd73"
+dependencies = [
+ "derivative",
+ "derive_builder",
+ "dns-lookup",
+ "hyper 0.14.5",
+ "tokio 1.4.0",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
 name = "hyper-tls"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1911,6 +1981,12 @@ dependencies = [
  "tokio 1.4.0",
  "tokio-native-tls",
 ]
+
+[[package]]
+name = "ident_case"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
 name = "idna"
@@ -2256,18 +2332,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mio-named-pipes"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0840c1c50fd55e521b247f949c241c9997709f23bd7f023b9762cd561e935656"
-dependencies = [
- "log",
- "mio 0.6.23",
- "miow 0.3.7",
- "winapi 0.3.9",
-]
-
-[[package]]
 name = "mio-uds"
 version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2330,9 +2394,12 @@ dependencies = [
 
 [[package]]
 name = "nibble_vec"
-version = "0.0.4"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8d77f3db4bce033f4d04db08079b2ef1c3d02b44e86f25d08886fafa7756ffa"
+checksum = "77a5d83df9f36fe23f0c3648c6bbb8b0298bb5f1939c8f2704431371f4b84d43"
+dependencies = [
+ "smallvec",
+]
 
 [[package]]
 name = "nom"
@@ -2426,12 +2493,6 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
-
-[[package]]
-name = "object"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9a7ab5d64814df0fe4a4b5ead45ed6c5f181ee3ff04ba344313a6c80446c5d4"
 
 [[package]]
 name = "omnom"
@@ -2702,18 +2763,22 @@ dependencies = [
 
 [[package]]
 name = "public-ip"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cda7cf449bab8662859dcaee1639e4a61e6dcd786ca0a43a8389bef80d96646"
+checksum = "ba5e48e5087711724b4536dfe11a201a20ae91a7f1b08e3e17a1053459e20580"
 dependencies = [
- "futures",
+ "dns-lookup",
+ "futures-core",
+ "futures-util",
  "http",
- "hyper 0.13.10",
- "once_cell",
- "regex",
- "tokio 0.2.25",
+ "hyper 0.14.5",
+ "hyper-system-resolver",
+ "pin-project-lite 0.2.6",
+ "thiserror",
+ "tokio 1.4.0",
+ "tracing",
  "trust-dns-client",
- "trust-dns-proto 0.19.7",
+ "trust-dns-proto 0.20.1",
 ]
 
 [[package]]
@@ -2762,9 +2827,9 @@ checksum = "941ba9d78d8e2f7ce474c015eea4d9c6d25b6a3327f9832ee29a4de27f91bbb8"
 
 [[package]]
 name = "radix_trie"
-version = "0.1.6"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d3681b28cd95acfb0560ea9441f82d6a4504fa3b15b97bd7b6e952131820e95"
+checksum = "c069c179fcdc6a2fe24d8d18305cf085fdbd4f922c041943e203685d6a1c58fd"
 dependencies = [
  "endian-type",
  "nibble_vec",
@@ -3152,12 +3217,6 @@ dependencies = [
  "blake2b_simd",
  "constant_time_eq",
 ]
-
-[[package]]
-name = "rustc-demangle"
-version = "0.1.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e3bad0ee36814ca07d7968269dd4b7ec89ec2da10c4bb613928d3077083c232"
 
 [[package]]
 name = "rustc_version"
@@ -3565,6 +3624,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
 
 [[package]]
+name = "strsim"
+version = "0.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
+
+[[package]]
 name = "structopt"
 version = "0.3.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3808,9 +3873,7 @@ dependencies = [
  "libc",
  "memchr",
  "mio 0.6.23",
- "mio-named-pipes",
  "mio-uds",
- "num_cpus",
  "pin-project-lite 0.1.12",
  "signal-hook-registry",
  "slab",
@@ -3830,8 +3893,12 @@ dependencies = [
  "memchr",
  "mio 0.7.11",
  "num_cpus",
+ "once_cell",
+ "parking_lot",
  "pin-project-lite 0.2.6",
+ "signal-hook-registry",
  "tokio-macros 1.1.0",
+ "winapi 0.3.9",
 ]
 
 [[package]]
@@ -3910,6 +3977,7 @@ checksum = "5143d049e85af7fbc36f5454d990e62c2df705b3589f123b71f441b6b59f443f"
 dependencies = [
  "bytes 1.0.1",
  "futures-core",
+ "futures-io",
  "futures-sink",
  "log",
  "pin-project-lite 0.2.6",
@@ -3940,7 +4008,19 @@ dependencies = [
  "cfg-if 1.0.0",
  "log",
  "pin-project-lite 0.2.6",
+ "tracing-attributes",
  "tracing-core",
+]
+
+[[package]]
+name = "tracing-attributes"
+version = "0.1.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c42e6fa53307c8a17e4ccd4dc81cf5ec38db9209f59b222210375b54ee40d1e2"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.9",
+ "syn 1.0.68",
 ]
 
 [[package]]
@@ -3964,21 +4044,22 @@ dependencies = [
 
 [[package]]
 name = "trust-dns-client"
-version = "0.19.7"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e935ae5a26a2745fb5a6b95f0e206e1cfb7f00066892d2cf78a8fee87bc2e0c6"
+checksum = "87b05ceb7459ea5c9242da2b92cc221b65b2849d4ff3c19313485ce468c62096"
 dependencies = [
  "cfg-if 1.0.0",
  "chrono",
  "data-encoding",
- "futures",
+ "futures-channel",
+ "futures-util",
  "lazy_static",
  "log",
  "radix_trie",
- "rand 0.7.3",
+ "rand 0.8.3",
  "thiserror",
- "tokio 0.2.25",
- "trust-dns-proto 0.19.7",
+ "tokio 1.4.0",
+ "trust-dns-proto 0.20.1",
 ]
 
 [[package]]
@@ -3988,9 +4069,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1cad71a0c0d68ab9941d2fb6e82f8fb2e86d9945b94e1661dd0aaea2b88215a9"
 dependencies = [
  "async-trait",
- "backtrace",
  "cfg-if 1.0.0",
- "data-encoding",
  "enum-as-inner",
  "futures",
  "idna",
@@ -4513,7 +4592,7 @@ checksum = "81a974bcdd357f0dca4d41677db03436324d45a4c9ed2d0b873a5a360ce41c36"
 [[package]]
 name = "zeromq"
 version = "0.1.0"
-source = "git+https://github.com/zeromq/zmq.rs?rev=5bc792a5b8876d7281e9bd933519d49a62b76caf#5bc792a5b8876d7281e9bd933519d49a62b76caf"
+source = "git+https://github.com/zeromq/zmq.rs?rev=ad9ee2c3d46e6b90c91827dcb7760b7a28071b97#ad9ee2c3d46e6b90c91827dcb7760b7a28071b97"
 dependencies = [
  "async-trait",
  "bytes 0.5.6",
@@ -4530,7 +4609,7 @@ dependencies = [
  "rand 0.7.3",
  "regex",
  "thiserror",
- "tokio 0.2.25",
- "tokio-util 0.3.1",
+ "tokio 1.4.0",
+ "tokio-util 0.6.5",
  "uuid",
 ]

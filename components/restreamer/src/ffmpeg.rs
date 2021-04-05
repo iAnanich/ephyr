@@ -249,7 +249,7 @@ impl Restreamer {
                         pin_mut!(running);
 
                         let set_online = async move {
-                            time::delay_for(Duration::from_secs(5)).await;
+                            time::sleep(Duration::from_secs(5)).await;
                             kind.renew_status(Status::Online, state);
                             future::pending::<()>().await;
                             Ok(())
@@ -280,7 +280,7 @@ impl Restreamer {
                     );
                 });
 
-                time::delay_for(Duration::from_secs(2)).await;
+                time::sleep(Duration::from_secs(2)).await;
             }
         });
 
