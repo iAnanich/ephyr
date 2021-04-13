@@ -1,0 +1,27 @@
+[package]
+name = "audio-redirect"
+version = "0.1.0"
+authors = ["skhalymon <sergiykhalimon@gmail.com>"]
+edition = "2018"
+publish = false
+default-run = "audio-redirect"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0"
+backoff = { version = "0.3", features = ["tokio"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_humantime = { version = "1.0", package = "humantime-serde" }
+serde_json = "1.0"
+structopt = "0.3"
+ephyr-log = { version = "0.1", path = "../../common/log" }
+[dependencies.tokio]
+version = "1"
+features = ["fs", "io-util", "process", "rt", "sync", "time"]
+[dependencies.tsclientlib]
+git = "https://github.com/ReSpeak/tsclientlib"
+rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+[dependencies.tsproto-packets]
+git = "https://github.com/ReSpeak/tsclientlib"
+rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
