@@ -20,10 +20,14 @@
 )]
 
 pub mod cli;
+pub mod devices;
+mod redirector;
+mod state;
+
 use std::mem;
 
 use ephyr_log::slog;
-
+use state::AudioDevices;
 /// Runs application.
 ///
 /// # Errors
@@ -44,5 +48,17 @@ pub fn run() -> Result<(), cli::Failure> {
     // to present in global context.
     mem::forget(ephyr_log::init(cfg.verbose));
 
-    Ok(())
+    if cfg.show_devices.is_some() {
+        let audio = AudioDevices::new();
+        //        let _device = audio.default_input_device();
+        // let host_id = host.id();
+        // let d_input = host.default_input_device().unwrap();
+        // let d_output = host.default_output_device().unwrap();
+        // let inputs = host.input_devices().unwrap();
+        // let outputs = host.output_devices().unwrap();
+        // println!("{}", format!("{:?}", d_input.name().unwrap()));
+        println!("{}", audio);
+        return Ok(());
+    }
+    redirector::run(cfg)
 }

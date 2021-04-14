@@ -41,13 +41,28 @@ pub struct Opts {
     )]
     pub output_device: Option<String>,
 
-    /// Path to a file to capture audio from.
+    /// Display all input and output devices.
     #[structopt(
         long,
-        help = "Path to a file to capture audio from",
-        long_help = "Path to a file to capture audio from. The supported formats are: [MP3, AAC, MP4]"
+        help = "Display all input and output devices",
+        long_help = "Display all input and output devices"
     )]
     pub show_devices: Option<bool>,
+
+    /// Display all input devices.
+    #[structopt(
+        long,
+        help = "Display all input devices",
+        long_help = "Display all input devices"
+    )]
+    pub show_input_devices: Option<bool>,
+    /// Display all output devices.
+    #[structopt(
+        long,
+        help = "Display all output devices",
+        long_help = "Display all output devices"
+    )]
+    pub show_output_devices: Option<bool>,
     /// Verbosity level of the audio-resirct logs.
     #[structopt(
     short,

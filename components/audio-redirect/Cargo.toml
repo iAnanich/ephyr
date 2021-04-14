@@ -16,12 +16,18 @@ serde_humantime = { version = "1.0", package = "humantime-serde" }
 serde_json = "1.0"
 structopt = "0.3"
 ephyr-log = { version = "0.1", path = "../../common/log" }
+rodio="0.13"
+cpal={version = "0.13", features=["jack"]}
 [dependencies.tokio]
-version = "1"
-features = ["fs", "io-util", "process", "rt", "sync", "time"]
+    version = "1"
+    features = ["fs", "io-util", "process", "rt", "sync", "time"]
 [dependencies.tsclientlib]
-git = "https://github.com/ReSpeak/tsclientlib"
-rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+    git = "https://github.com/ReSpeak/tsclientlib"
+    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
 [dependencies.tsproto-packets]
-git = "https://github.com/ReSpeak/tsclientlib"
-rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+    git = "https://github.com/ReSpeak/tsclientlib"
+    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+[dependencies.derive_more]
+    version = "0.99.11"
+    features = ["display", "error", "from"]
+    default-features = false
