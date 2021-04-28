@@ -1,5 +1,5 @@
 <script lang="js">
-  import Restream, { value } from '../Restream.svelte';
+  import Restream from '../Restream.svelte';
   import Confirm from '../Confirm.svelte';
   import { showError } from '../util';
   import { mutation } from 'svelte-apollo';
@@ -54,11 +54,11 @@
       <span class="uk-width-expand toolbar-label"
         >OUTPUTS: {totalOutputsCount}</span
       >
-      <div class="buttons-section uk-width-auto uk-flex-right">
+      <div class="uk-panel uk-width-auto uk-flex-right">
         <Confirm let:confirm>
           <button
             class="uk-button uk-button-default"
-            title="Start all outputs of all inputs"
+            title="Start all outputs of all restreams"
             on:click={() => confirm(enableAllOutputsOfRestreams)}
             ><span class="uk-visible@m">Start All</span><span
               class="uk-hidden@m">Start</span
@@ -74,7 +74,7 @@
         <Confirm let:confirm>
           <button
             class="uk-button uk-button-default"
-            title="Start all outputs of all restreams"
+            title="Stop all outputs of all restreams"
             on:click={() => confirm(disableAllOutputsOfRestreams)}
             value=""
             ><span class="uk-visible@m">Stop All</span><span class="uk-hidden@m"
