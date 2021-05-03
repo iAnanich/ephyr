@@ -353,4 +353,8 @@
     .uk-icon-link
       pointer-events: all
 
+  .overflow-wrap
+    overflow-wrap: anywhere;
+    white-space: normal;
+
 </style>

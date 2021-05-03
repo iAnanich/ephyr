@@ -110,7 +110,7 @@
       />
       <span slot="title">Removing output</span>
       <span slot="description"
-        ><code>{value.dst}</code>
+        ><code class="overflow-wrap">{value.dst}</code>
         <br /><br />
         {#if value.dst.startsWith('file:///')}
           <b>Warning!</b> Any associated recorded files will be removed.
@@ -158,6 +158,7 @@
       </RecordsModal>
     {:else}
       <span
+        class="overflow-wrap"
         on:dblclick|preventDefault={() => copyToClipboard(value.dst)}
         title="Double-click to copy">{value.dst}</span
       >
