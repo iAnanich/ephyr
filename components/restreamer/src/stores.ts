@@ -322,6 +322,19 @@ export class OutputModalState {
   label: string = '';
 
   /**
+   * Url for preview of stream
+   *
+   */
+  preview_url: string = '';
+
+  /**
+   * Previous value of `Output`'s preview URL before it has been edited in
+   * the [[`OutputModal`]].
+   *
+   */
+  prev_preview_url: string = '';
+
+  /**
    * Previous label of the `Output` before it has been edited in the
    * [[`OutputModal`]].
    *
@@ -420,6 +433,7 @@ export class OutputModal implements Writable<OutputModalState> {
    *                       to.
    * @param id             ID of the `Output` being edited.
    * @param label          Current label of the `Output` before editing.
+   * @param preview_url     Preview url for Output.
    * @param dst_url        Current destination URL of the `Output` before
    *                       editing.
    * @param mix_urls       Current mixing URLs of the `Output` before editing.
@@ -428,6 +442,7 @@ export class OutputModal implements Writable<OutputModalState> {
     restream_id: string,
     id: string,
     label: string | null,
+    preview_url: string | null,
     dst_url: string,
     mix_urls: string[]
   ) {

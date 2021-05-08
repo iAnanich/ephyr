@@ -197,6 +197,12 @@
           bind:value={$value.url}
           placeholder="rtmp://..."
         />
+        <input
+            class="uk-input"
+            type="text"
+            bind:value={$value.previewUrl}
+            placeholder="optional preview url"
+        />
         <div class="uk-alert">
           Server will publish the input live stream to this address.
           <br />
@@ -294,9 +300,11 @@ label3,rtmp://3..."
       border: none
       padding: 0
 
+      > input
+        margin-bottom: 5px
+
       .uk-form-small
         width: auto
-        margin-bottom: 5px
 
       .uk-textarea
         min-height: 200px

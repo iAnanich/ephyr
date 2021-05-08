@@ -24,6 +24,7 @@ use crate::{
 };
 
 use super::Context;
+use url::Url;
 
 /// Full schema of [`api::graphql::client`].
 ///
@@ -340,6 +341,7 @@ impl MutationsRoot {
         restream_id: RestreamId,
         dst: OutputDstUrl,
         label: Option<Label>,
+        preview_url: Option<Url>,
         mixins: Vec<MixinSrcUrl>,
         id: Option<OutputId>,
         context: &Context,
@@ -374,6 +376,7 @@ impl MutationsRoot {
         let spec = spec::v1::Output {
             dst,
             label,
+            preview_url,
             volume: Volume::ORIGIN,
             mixins: mixins
                 .into_iter()

@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use serde::{de::Error as _, Deserialize, Deserializer, Serialize};
 
 use crate::{serde::is_false, state};
+use url::Url;
 
 /// Shareable (exportable and importable) specification of a [`State`].
 ///
@@ -226,6 +227,10 @@ pub struct Output {
     /// Optional label of this [`Output`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub label: Option<state::Label>,
+
+    /// Url of stream preview.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preview_url: Option<Url>,
 
     /// Volume rate of this [`Output`]'s audio tracks when mixed with
     /// [`Output::mixins`].

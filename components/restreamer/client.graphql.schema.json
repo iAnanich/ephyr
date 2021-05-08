@@ -385,6 +385,16 @@
                 "defaultValue": null
               },
               {
+                "name": "previewUrl",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Url",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "mixins",
                 "description": "Optional `MixinSrcUrl`s to mix into this `Output`.",
                 "type": {
@@ -834,7 +844,7 @@
           },
           {
             "name": "setSettings",
-            "description": "Sets settings of the server\n\n### Result\n\nReturns `false` if title does not pass validation for max allowed characters length\notherwise returns `true`",
+            "description": "Sets settings of the server\n\n### Result\n\nReturns `false` if title does not pass validation for max allowed\ncharacters length. Otherwise returns `true`",
             "args": [
               {
                 "name": "title",
@@ -1484,6 +1494,16 @@
         "possibleTypes": null
       },
       {
+        "kind": "SCALAR",
+        "name": "Url",
+        "description": "Url",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "ENUM",
         "name": "InputEndpointKind",
         "description": "Possible kinds of an `InputEndpoint`.",
@@ -1560,6 +1580,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Label",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "previewUrl",
+            "description": "Url of stream preview.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Url",
               "ofType": null
             },
             "isDeprecated": false,

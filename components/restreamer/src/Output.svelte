@@ -95,6 +95,7 @@
       restream_id,
       value.id,
       value.label,
+      value.previewUrl,
       value.dst,
       value.mixins.map((m) => m.src)
     );
@@ -169,6 +170,9 @@
         on:dblclick|preventDefault={() => copyToClipboard(value.dst)}
         title="Double-click to copy">{value.dst}</span
       >
+      {#if value.previewUrl}
+        &nbsp;[<a href="{value.previewUrl}" target="_blank">Preview</a>]
+      {/if}
     {/if}
 
     {#if value.mixins.length > 0}
