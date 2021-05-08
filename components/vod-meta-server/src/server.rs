@@ -72,7 +72,7 @@ pub async fn run(opts: cli::Opts) -> Result<(), cli::Failure> {
 
     let auth_token_hash = AuthTokenHash(opts.auth_token_hash);
 
-    let _ = HttpServer::new(move || {
+    let _server = HttpServer::new(move || {
         App::new()
             .data(state.clone())
             .data(cache.clone())
