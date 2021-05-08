@@ -678,18 +678,25 @@ impl MutationsRoot {
         Ok(true)
     }
 
-    /// Sets title for this server in order to differentiate it on UI side
-    /// if multiple servers are used.
+    /// Sets settings of the server
     ///
     /// ### Result
     ///
-    /// Returns `true` if title has been set and it has length less or
-    /// equal 70 chars, otherwise returns `false`
-    #[graphql(arguments(title(description = "Title for the server"),))]
-    fn set_title(
+    /// Returns `false` if title does not pass validation for max allowed
+    /// characters length. Otherwise returns `true`
+    #[graphql(arguments(
+        title(description = "Title for the server"),
+        delete_confirmation(
+            description = "Whether do we need to confirm deletion of inputs \
+            and outputs"
+        )
+    ))]
+    fn set_settings(
         title: Option<String>,
+        delete_confirmation: Option<bool>,
         context: &Context,
     ) -> Result<bool, graphql::Error> {
+        // Validate title
         let value = title.unwrap_or_default();
         if value.len() > 70 {
             return Err(graphql::Error::new("WRONG_TITLE_LENGTH")
@@ -699,6 +706,7 @@ impl MutationsRoot {
 
         let mut settings = context.state().settings.lock_mut();
         settings.title = Some(value);
+        settings.delete_confirmation = delete_confirmation;
         Ok(true)
     }
 }
@@ -718,6 +726,7 @@ impl QueriesRoot {
             public_host: context.config().public_host.clone().unwrap(),
             password_hash: settings.password_hash,
             title: settings.title,
+            delete_confirmation: settings.delete_confirmation,
         }
     }
 
@@ -800,6 +809,7 @@ impl SubscriptionsRoot {
                 public_host: public_host.clone(),
                 password_hash: h.password_hash,
                 title: h.title,
+                delete_confirmation: h.delete_confirmation,
             })
             .to_stream()
             .boxed()
@@ -829,6 +839,9 @@ pub struct Info {
 
     /// Title of the server
     pub title: Option<String>,
+
+    /// Whether do we need to confirm deletion of inputs and outputs
+    pub delete_confirmation: Option<bool>,
 
     /// [Argon2] hash of the password that this server's GraphQL API is
     /// protected with, if any.

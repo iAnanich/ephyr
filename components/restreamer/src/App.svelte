@@ -29,7 +29,7 @@
 
   import * as PageAll from './pages/All.svelte';
   import * as PageOutput from './pages/Output.svelte';
-  import TitleModal from './TitleModal.svelte';
+  import SettingsModal from './SettingsModal.svelte';
 
   UIkit.use(Icons);
 
@@ -80,7 +80,7 @@
   );
 
   let openPasswordModal = false;
-  let openTitleModal = false;
+  let openSettingsModal = false;
 
   async function openExportModal() {
     let resp;
@@ -154,14 +154,14 @@
           {#if isOnline && $info.data}
             <a
               href="/"
-              class="set-title"
-              on:click|preventDefault={() => (openTitleModal = true)}
+              class="set-settings"
+              on:click|preventDefault={() => (openSettingsModal = true)}
             >
               <i class="fas fa-edit" title="Set title" />
             </a>
-            <TitleModal
-              title={$info.data.info.title}
-              bind:visible={openTitleModal}
+            <SettingsModal
+              info={$info.data.info}
+              bind:visible={openSettingsModal}
             />
             {#key $info.data.info.passwordHash}
               <a
@@ -267,13 +267,13 @@
     padding: 10px
 
     button
-    .set-password, .set-title
+    .set-password, .set-settings
       margin-right: 26px
 
     .back-to-all
       margin-top: 2px
 
-    .set-password, .set-title, .back-to-all
+    .set-password, .set-settings, .back-to-all
       font-size: 26px
       color: var(--primary-text-color)
       outline: none
@@ -352,5 +352,9 @@
 
     .uk-icon-link
       pointer-events: all
+
+  .overflow-wrap
+    overflow-wrap: anywhere;
+    white-space: normal;
 
 </style>

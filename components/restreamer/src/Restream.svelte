@@ -1,13 +1,14 @@
 <svelte:options immutable={true} />
 
 <script lang="js">
-  import { mutation, getClient } from 'svelte-apollo';
+  import { mutation, getClient, subscribe } from 'svelte-apollo';
 
   import {
     RemoveRestream,
     DisableAllOutputs,
     EnableAllOutputs,
     ExportRestream,
+    Info,
   } from './api/graphql/client.graphql';
 
   import { showError } from './util';
@@ -24,9 +25,14 @@
   const enableAllOutputsMutation = mutation(EnableAllOutputs);
 
   const gqlClient = getClient();
+  const info = subscribe(Info, { errorPolicy: 'all' });
 
   export let public_host = 'localhost';
   export let value;
+
+  $: deleteConfirmation = $info.data
+    ? $info.data.info.deleteConfirmation
+    : true;
 
   $: allEnabled = value.outputs.every((o) => o.enabled);
 
@@ -143,7 +149,9 @@
         type="button"
         class="uk-close"
         uk-close
-        on:click={() => confirm(removeRestream)}
+        on:click={deleteConfirmation
+          ? () => confirm(removeRestream)
+          : removeRestream}
       />
       <span slot="title"
         >Removing <code>{value.key}</code> input source for re-streaming</span

@@ -31,14 +31,30 @@ use crate::{display_panic, serde::is_false, spec, srs, Spec};
 /// Server's settings.
 ///
 /// It keeps different settings not related to restreams but to whole server
-#[derive(Clone, Debug, Default, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub struct Settings {
     /// [`argon2`] hash of password which protects access to this application's
     /// public APIs.
     pub password_hash: Option<String>,
 
     /// Title for the server
+    /// It is used for differentiating servers on UI side if multiple servers
+    /// are used.
     pub title: Option<String>,
+
+    /// Whether do we need to confirm deletion of inputs and outputs
+    /// If `true` we should confirm deletion, `false` - do not confirm
+    pub delete_confirmation: Option<bool>,
+}
+
+impl Default for Settings {
+    fn default() -> Settings {
+        Settings {
+            password_hash: None,
+            title: None,
+            delete_confirmation: Some(true),
+        }
+    }
 }
 
 /// Reactive application's state.

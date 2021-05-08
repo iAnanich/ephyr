@@ -1,10 +1,11 @@
 <script lang="js">
-  import { mutation } from 'svelte-apollo';
+  import { mutation, subscribe } from 'svelte-apollo';
   import { link, location } from 'svelte-spa-router';
 
   import {
     DisableOutput,
     EnableOutput,
+    Info,
     RemoveOutput,
     TuneVolume,
   } from './api/graphql/client.graphql';
@@ -23,6 +24,8 @@
   const removeOutputMutation = mutation(RemoveOutput);
   const tuneVolumeMutation = mutation(TuneVolume);
 
+  const info = subscribe(Info, { errorPolicy: 'all' });
+
   export let public_host;
   export let value;
   export let restream_id;
@@ -36,6 +39,10 @@
     // it is changed, as we're only interested in `value` changes here.
     update_volume();
   }
+
+  $: deleteConfirmation = $info.data
+    ? $info.data.info.deleteConfirmation
+    : true;
 
   // Last used non-zero volume.
   let last_volume = value.volume === 0 ? 100 : value.volume;
@@ -106,11 +113,11 @@
         type="button"
         class="uk-close"
         uk-close
-        on:click={() => confirm(remove)}
+        on:click={deleteConfirmation ? () => confirm(remove) : remove}
       />
       <span slot="title">Removing output</span>
       <span slot="description"
-        ><code>{value.dst}</code>
+        ><code class="overflow-wrap">{value.dst}</code>
         <br /><br />
         {#if value.dst.startsWith('file:///')}
           <b>Warning!</b> Any associated recorded files will be removed.
@@ -158,6 +165,7 @@
       </RecordsModal>
     {:else}
       <span
+        class="overflow-wrap"
         on:dblclick|preventDefault={() => copyToClipboard(value.dst)}
         title="Double-click to copy">{value.dst}</span
       >

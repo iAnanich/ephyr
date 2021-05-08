@@ -616,7 +616,7 @@
           },
           {
             "name": "enablesAllOutputsOfRestreams",
-            "description": "Enables all `Output`s in all `Restream`s.\n\nEnabled `Output`s start re-streaming a live stream to their\ndestinations.\n\n### Result\n\nReturns `true` if at least one `Output` has been enabled, `false` if all\n`Output`s have been enabled already or there are not outputs",
+            "description": "Enables all `Output`s in all `Restream`s.\n\nEnabled `Output`s start re-streaming a live stream to their\ndestinations.\n\n### Result\n\nReturns `true` if at least one `Output` has been enabled, `false` if all\n`Output`s have been enabled already or there are no outputs",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -833,8 +833,8 @@
             "deprecationReason": null
           },
           {
-            "name": "setTitle",
-            "description": "Sets title for this server in order to differentiate it on UI side\nif multiple servers are used.\n\n### Result\n\nReturns `true` if title has been set and it has length less or\nequal 70 chars, otherwise returns `false`",
+            "name": "setSettings",
+            "description": "Sets settings of the server\n\n### Result\n\nReturns `false` if title does not pass validation for max allowed characters length\notherwise returns `true`",
             "args": [
               {
                 "name": "title",
@@ -842,6 +842,16 @@
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "deleteConfirmation",
+                "description": "Whether do we need to confirm deletion of inputs and outputs",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -2091,6 +2101,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteConfirmation",
+            "description": "Whether do we need to confirm deletion of inputs and outputs",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,
