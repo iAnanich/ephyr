@@ -293,6 +293,11 @@ export class RestreamModal implements Writable<RestreamModalState> {
   }
 }
 
+enum Multiple {
+  List = 'list',
+  Json = 'json'
+}
+
 /**
  * State of the modal window for adding/editing re-streaming `Output`s.
  */
@@ -310,9 +315,19 @@ export class OutputModalState {
   edit_id: string | null = null;
 
   /**
-   * Indicator whether the "Multiple" tab is active in the [[`OutputModal`]].
+   * Indicator whether the "Multiple list" or "Multiple json" tab is active in the [[`OutputModal`]].
    */
-  multi: boolean = false;
+  multi: Multiple | false = false;
+
+  /**
+   * Check whether current tab is "Multiple list"
+   */
+  isMultiList = () => this.multi === Multiple.List;
+
+  /**
+   * Check whether current tab is "Multiple json"
+   */
+  isMultiJson = () => this.multi === Multiple.Json;
 
   /**
    * Label to be assigned to the `Output`.
@@ -369,6 +384,12 @@ export class OutputModalState {
    * format.
    */
   list: string = '';
+
+  /**
+   * Json representation of multiple outputs
+   * format.
+   */
+  json: string = '';
 
   /**
    * Indicator whether the [[`OutputModal`]] is visible (opened) at the
@@ -433,7 +454,7 @@ export class OutputModal implements Writable<OutputModalState> {
    *                       to.
    * @param id             ID of the `Output` being edited.
    * @param label          Current label of the `Output` before editing.
-   * @param preview_url     Preview url for Output.
+   * @param preview_url    Preview url for Output.
    * @param dst_url        Current destination URL of the `Output` before
    *                       editing.
    * @param mix_urls       Current mixing URLs of the `Output` before editing.
@@ -452,6 +473,9 @@ export class OutputModal implements Writable<OutputModalState> {
 
       v.prev_label = sanitizeLabel(label ?? '');
       v.label = v.prev_label;
+
+      v.prev_preview_url = sanitizeUrl(preview_url ?? '');
+      v.preview_url = v.prev_preview_url;
 
       v.prev_url = sanitizeUrl(dst_url);
       v.url = v.prev_url;
@@ -476,11 +500,21 @@ export class OutputModal implements Writable<OutputModalState> {
   }
 
   /**
-   * Switches the current active tab of this [[`OutputModal`]] to "Multiple".
+   * Switches the current active tab of this [[`OutputModal`]] to "Multiple.List".
    */
-  switchMulti() {
+  switchMultiList() {
     this.update((v) => {
-      v.multi = true;
+      v.multi = Multiple.List;
+      return v;
+    });
+  }
+
+  /**
+   * Switches the current active tab of this [[`OutputModal`]] to "Multiple.List".
+   */
+  switchMultiJson() {
+    this.update((v) => {
+      v.multi = Multiple.Json;
       return v;
     });
   }
@@ -525,6 +559,9 @@ export class OutputModal implements Writable<OutputModalState> {
 
       v.label = '';
       v.prev_label = null;
+
+      v.preview_url = '';
+      v.prev_preview_url = '';
 
       v.url = '';
       v.prev_url = null;

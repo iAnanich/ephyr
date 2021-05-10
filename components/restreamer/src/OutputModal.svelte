@@ -1,5 +1,6 @@
 <script lang="js">
-  import { onDestroy } from 'svelte';
+
+import { onDestroy } from 'svelte';
   import { mutation } from 'svelte-apollo';
 
   import { SetOutput } from './api/graphql/client.graphql';
@@ -23,6 +24,7 @@
           changed |=
             v.label !== v.prev_label ||
             v.url !== v.prev_url ||
+            v.preview_url !== v.prev_preview_url ||
             JSON.stringify(v.mix_urls) !== JSON.stringify(v.prev_mix_urls);
         }
         if (v.mix_urls.length > 0) {
@@ -59,6 +61,10 @@
       })
       .filter((line) => line !== '')
       .join('\n');
+  }
+
+  function revalidateJson() {
+
   }
 
   function revalidateList() {
@@ -105,6 +111,12 @@
       if (label !== '') {
         vars.label = label;
       }
+
+      const preview_url = sanitizeUrl(v.preview_url);
+      if(preview_url !== '') {
+        vars.preview_url = preview_url;
+      }
+
       if (v.mix_urls.length > 0) {
         vars.mixins = v.mix_urls;
       }
@@ -149,11 +161,37 @@
     value.removeMixinSlot(i);
     event.currentTarget.checked = true;
   }
+
+  const multipleNoteTemplate = `
+      <div class="uk-alert">
+        Server will publish the input live stream to these addresses.
+        <br />
+        Supported protocols: <code>rtmp://</code>, <code>icecast://</code>
+    </div>
+`;
+
+const multiListPlaceholderText = `One line - one address (with optional label):
+  label1,rtmp://1...
+  rtmp://2...
+  label3,rtmp://3..."
+`;
+
+  const multiJsonPlaceholderText = `Array of outputs (Fields: 'label' and 'preview_url' are optional) :
+[
+  { "url": "rtmp://1...", "label": "label1", "preview_url": "https://1..." },
+  { "url": "rtmp://2...", "label": "label2" },
+  { "url": "rtmp://3..." }
+]
+`;
+
+
 </script>
 
 <template>
   <div class="uk-modal" class:uk-open={$value.visible}>
-    <div class="uk-modal-dialog uk-modal-body" class:is-multi={$value.multi}>
+    <div class="uk-modal-dialog uk-modal-body"
+         class:is-multi-list={$value.isMultiList()}
+         class:is-multi-json={$value.isMultiJson()}>
       <h2 class="uk-modal-title">
         {#if !$value.edit_id}
           Add new output destination{$value.multi ? 's' : ''} for re-streaming
@@ -175,9 +213,14 @@
               >Single</a
             >
           </li>
-          <li class:uk-active={$value.multi}>
-            <a href="/" on:click|preventDefault={() => value.switchMulti()}
-              >Multiple</a
+          <li class:uk-active={$value.isMultiList()}>
+            <a href="/" on:click|preventDefault={() => value.switchMultiList()}
+              >Multiple - list</a
+            >
+          </li>
+          <li class:uk-active={$value.isMultiJson()}>
+            <a href="/" on:click|preventDefault={() => value.switchMultiJson()}
+            >Multiple - Json</a
             >
           </li>
         </ul>
@@ -200,7 +243,7 @@
         <input
             class="uk-input"
             type="text"
-            bind:value={$value.previewUrl}
+            bind:value={$value.preview_url}
             placeholder="optional preview url"
         />
         <div class="uk-alert">
@@ -257,7 +300,7 @@
         {/if}
       </fieldset>
 
-      <fieldset class="multi-form">
+      <fieldset class="multi-list-form">
         {#if !!invalidLine}
           <span class="uk-form-danger line-err">Invalid line {invalidLine}</span
           >
@@ -267,16 +310,17 @@
           class:uk-form-danger={!!invalidLine}
           bind:value={$value.list}
           on:change={revalidateList}
-          placeholder="One line - one address (with optional label):
-label1,rtmp://1...
-rtmp://2...
-label3,rtmp://3..."
+          placeholder= {multiListPlaceholderText}
         />
-        <div class="uk-alert">
-          Server will publish the input live stream to these addresses.
-          <br />
-          Supported protocols: <code>rtmp://</code>, <code>icecast://</code>
-        </div>
+        {@html multipleNoteTemplate}
+      </fieldset>
+
+      <fieldset class="multi-json-form">
+        <textarea
+                class="uk-textarea"
+                bind:value={$value.json}
+                placeholder= {multiJsonPlaceholderText}/>
+        {@html multipleNoteTemplate}
       </fieldset>
 
       <button
@@ -320,12 +364,20 @@ label3,rtmp://3..."
 
     .single-form
       display: block
-    .multi-form
+
+    .multi-list-form,.multi-json-form
       display: none
-    .is-multi
+
+    .is-multi-list,.is-multi-json
       .single-form
         display: none
-      .multi-form
+
+    .is-multi-list
+      .multi-list-form
+        display: block
+
+    .is-multi-json
+      .multi-json-form
         display: block
 
     .mix-with
