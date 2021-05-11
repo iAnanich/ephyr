@@ -171,14 +171,14 @@ impl<S: ScalarValue> IntoFieldError<S> for Error {
     fn into_field_error(self) -> FieldError<S> {
         let size = if self.backtrace.is_some() { 3 } else { 2 };
         let mut extensions = juniper::Object::with_capacity(size);
-        let _ = extensions
+        let _added_code = extensions
             .add_field("code", graphql_value!(self.code.into_owned()));
-        let _ = extensions.add_field(
+        let _added_status = extensions.add_field(
             "status",
             graphql_value!(i32::from(self.status.as_u16())),
         );
         if let Some(backtrace) = self.backtrace {
-            let _ = extensions.add_field(
+            let _added_backtrace = extensions.add_field(
                 "backtrace",
                 juniper::Value::List(
                     backtrace.into_iter().map(juniper::Value::from).collect(),
