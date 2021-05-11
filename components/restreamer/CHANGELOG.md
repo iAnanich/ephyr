@@ -3,12 +3,45 @@ Ephyr re-streamer changelog
 
 All user visible changes to this project will be documented in this file. This project uses [Semantic Versioning 2.0.0].
 
-## Unreleased
-[Unreleased]: /../../tree/master
+## [0.3.0] · 2021-05-11
+[0.3.0]: /../../tree/restreamer-v0.3.0
 
-[Diff](/../../compare/restreamer-v0.2.0...master)
+[Diff](/../../compare/restreamer-v0.2.0...restreamer-v0.3.0)
 
-...
+### Added
+
+- Web UI:
+    - Settings:
+        - Add setting title for Ephyr server and info popup ([#43], [#35]);
+        - Add setting for optional strict mode for input and output deletion ([#57], [#45]);
+    - Add section with `Start all` and `Stop all` buttons and amounts of `Input`s and `Output`s ([#49], [#35]);
+    - Restrict error message length and allow copying text ([#53], [#50]).
+- GraphQL API:
+    - Types:
+        - Create `Settings` struct with fields `password_hash` and `title` ([#43], [#35]);
+        - Add `settings` field into `State` ([#43], [#35]);
+        - Add `delete_confirmation` into `Settings` ([#57], [#45]).
+  - Mutations:
+        - Add `setSettings` with argument `title` and `deleteConfirmation` ([#43], [#35], [#57], [#45]);
+        - Add `disableAllOutputsOfRestreams` and `enablesAllOutputsOfRestreams` ([#49], [#35]).
+  - Subscriptions:
+        - Add `title` field to `Info` subscription ([#43], [#35]);
+        - Add `delete_confirmation` field to `Info` subscription ([#57], [#45]).
+
+### Fixed
+
+- Web UI:
+    - Layout issues on small screen ([#49]).
+
+[#35]: /../../issues/35
+[#45]: /../../issues/45
+[#50]: /../../issues/50
+[#43]: /../../pull/43
+[#49]: /../../pull/49
+[#53]: /../../pull/53
+[#57]: /../../pull/57
+
+
 
 ## [0.2.0] · 2021-03-18
 [0.2.0]: /../../tree/restreamer-v0.2.0
