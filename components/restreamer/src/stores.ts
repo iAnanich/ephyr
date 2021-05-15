@@ -570,6 +570,7 @@ export class OutputModal implements Writable<OutputModalState> {
       v.prev_mix_urls = null;
 
       v.list = '';
+      v.json = '';
       v.visible = false;
       return v;
     });

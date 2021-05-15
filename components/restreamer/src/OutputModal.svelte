@@ -13,10 +13,11 @@ import { onDestroy } from 'svelte';
 
   let submitable = false;
   let invalidLine;
+  let invalidJson;
   onDestroy(
     value.subscribe((v) => {
       if (v.multi) {
-        submitable = v.list !== '' && !invalidLine;
+        submitable = (v.list !== '' && !invalidLine) || (v.json !== '' && !invalidJson);
       } else {
         submitable = v.url !== '';
         let changed = !v.edit_id;
@@ -63,8 +64,8 @@ import { onDestroy } from 'svelte';
       .join('\n');
   }
 
-  function revalidateJson() {
-
+  function resetJsonErrors() {
+    invalidJson = '';
   }
 
   function revalidateList() {
@@ -85,23 +86,43 @@ import { onDestroy } from 'svelte';
   }
 
   async function submit() {
-    revalidateList();
+    if($value.isMultiList()) {
+      revalidateList();
+    } else {
+      resetJsonErrors();
+    }
     if (!submitable) return;
 
     let submit = [];
     const v = value.get();
     if (v.multi) {
-      v.list.split(/\r\n|\r|\n/).forEach((line) => {
-        const vs = line.split(',');
-        let vars = {
-          restream_id: v.restream_id,
-          url: vs[vs.length - 1],
-        };
-        if (vs.length > 1) {
-          vars.label = vs[0];
+      if (v.isMultiList()) {
+          v.list.split(/\r\n|\r|\n/).forEach((line) => {
+            const vs = line.split(',');
+            let vars = {
+              restream_id: v.restream_id,
+              url: vs[vs.length - 1],
+            };
+            if (vs.length > 1) {
+              vars.label = vs[0];
+            }
+            submit.push(vars);
+          });
+      } else { // v.isMultiJson()
+        try {
+          submit = JSON.parse(v.json.trim()).map(x => ({
+              restream_id: v.restream_id,
+              url: sanitizeUrl(x.url),
+              label: sanitizeLabel(x.label),
+              preview_url: sanitizeUrl(x.preview_url)
+            }
+          ));
+        } catch (error) {
+          invalidJson = 'Json representation of outputs is malformed. Please follow the example: ';
+          console.error(error);
+          return;
         }
-        submit.push(vars);
-      });
+      }
     } else {
       let vars = {
         restream_id: v.restream_id,
@@ -318,8 +339,21 @@ const multiListPlaceholderText = `One line - one address (with optional label):
       <fieldset class="multi-json-form">
         <textarea
                 class="uk-textarea"
+                class:uk-form-danger={!!invalidJson}
                 bind:value={$value.json}
+                on:change={resetJsonErrors}
                 placeholder= {multiJsonPlaceholderText}/>
+        {#if !!invalidJson}
+          <div class="uk-form-danger json-err">
+            <span class="">{invalidJson}</span>
+            <pre>
+              <code>
+                {multiJsonPlaceholderText}
+              </code>
+          </pre>
+        </div>
+        {/if}
+
         {@html multipleNoteTemplate}
       </fieldset>
 
@@ -361,6 +395,10 @@ const multiListPlaceholderText = `One line - one address (with optional label):
       .line-err
         display: block
         font-size: 11px
+      .json-err
+        font-size: 11px
+        pre
+          font-size: inherit
 
     .single-form
       display: block
