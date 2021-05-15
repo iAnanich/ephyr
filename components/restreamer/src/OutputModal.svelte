@@ -17,7 +17,7 @@ import { onDestroy } from 'svelte';
   onDestroy(
     value.subscribe((v) => {
       if (v.multi) {
-        submitable = (v.list !== '' && !invalidLine) || (v.json !== '' && !invalidJson);
+        submitable = (v.isMultiList() && v.list !== '' && !invalidLine) || (v.isMultiJson() && v.json !== '' && !invalidJson);
       } else {
         submitable = v.url !== '';
         let changed = !v.edit_id;
@@ -64,8 +64,16 @@ import { onDestroy } from 'svelte';
       .join('\n');
   }
 
-  function resetJsonErrors() {
+  function revalidateJson() {
+    const v = value.get();
     invalidJson = '';
+    if (v.json.trim()) {
+      try {
+        JSON.parse(v.json);
+      } catch (e) {
+        invalidJson = 'Failed to parse JSON: ' + e.message + '. Please follow the example:';
+      }
+    }
   }
 
   function revalidateList() {
@@ -86,15 +94,21 @@ import { onDestroy } from 'svelte';
   }
 
   async function submit() {
-    if($value.isMultiList()) {
-      revalidateList();
-    } else {
-      resetJsonErrors();
+    let v = value.get();
+    if(v.multi) {
+      if(v.isMultiList()) {
+        revalidateList();
+      } else if(v.isMultiJson()) {
+        revalidateJson();
+      } else {
+        throw new Error('Unknown list type');
+      }
     }
+
     if (!submitable) return;
 
     let submit = [];
-    const v = value.get();
+    v = value.get();
     if (v.multi) {
       if (v.isMultiList()) {
           v.list.split(/\r\n|\r|\n/).forEach((line) => {
@@ -108,7 +122,7 @@ import { onDestroy } from 'svelte';
             }
             submit.push(vars);
           });
-      } else { // v.isMultiJson()
+      } else if(v.isMultiJson()) { //
         try {
           submit = JSON.parse(v.json.trim()).map(x => ({
               restream_id: v.restream_id,
@@ -117,9 +131,9 @@ import { onDestroy } from 'svelte';
               preview_url: sanitizeUrl(x.preview_url)
             }
           ));
-        } catch (error) {
-          invalidJson = 'Json representation of outputs is malformed. Please follow the example: ';
-          console.error(error);
+        } catch (e) {
+          showError('Failed to add ' + variables.url + ':\n' + e.message);
+          failed.push(variables);
           return;
         }
       }
@@ -159,16 +173,26 @@ import { onDestroy } from 'svelte';
         }
       })
     );
+
     if (failed.length < 1) {
       value.close();
       return;
     }
+
     value.update((v) => {
-      v.list = failed
-        .map((vars) => {
-          return (vars.label ? vars.label + ',' : '') + vars.url;
-        })
-        .join('\n');
+      if(v.isMultiList()) {
+        v.list = failed
+          .map((vars) => {
+            return (vars.label ? vars.label + ',' : '') + vars.url;
+          })
+          .join('\n');
+      } else if(v.isMultiJson()) { //
+        v.json = JSON.stringify(failed.map(x => {
+          const { url, label, preview_url } = x;
+          return { url, label, preview_url };
+        }));
+      }
+
       return v;
     });
   }
@@ -199,8 +223,8 @@ const multiListPlaceholderText = `One line - one address (with optional label):
 
   const multiJsonPlaceholderText = `Array of outputs (Fields: 'label' and 'preview_url' are optional) :
 [
-  { "url": "rtmp://1...", "label": "label1", "preview_url": "https://1..." },
-  { "url": "rtmp://2...", "label": "label2" },
+  { "label": "label1", "url": "rtmp://1...", "preview_url": "https://1..." },
+  { "label": "label2", "url": "rtmp://2..." },
   { "url": "rtmp://3..." }
 ]
 `;
@@ -341,7 +365,7 @@ const multiListPlaceholderText = `One line - one address (with optional label):
                 class="uk-textarea"
                 class:uk-form-danger={!!invalidJson}
                 bind:value={$value.json}
-                on:change={resetJsonErrors}
+                on:change={revalidateJson}
                 placeholder= {multiJsonPlaceholderText}/>
         {#if !!invalidJson}
           <div class="uk-form-danger json-err">
