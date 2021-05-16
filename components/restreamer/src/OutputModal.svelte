@@ -132,8 +132,8 @@ import { onDestroy } from 'svelte';
           submit = JSON.parse(v.json.trim()).map(x => ({
               restream_id: v.restream_id,
               url: sanitizeUrl(x.url),
-              label: sanitizeLabel(x.label),
-              preview_url: sanitizeUrl(x.preview_url)
+              ... (x.label && {label: sanitizeLabel(x.label)}),
+              ... (x.preview_url && {preview_url: sanitizeUrl(x.preview_url)})
             }
           ));
         } catch (e) {
