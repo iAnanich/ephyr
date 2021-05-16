@@ -47,6 +47,25 @@ pub struct Settings {
     pub delete_confirmation: Option<bool>,
 }
 
+impl Settings {
+    /// Exports this [`Settings`] as a [`spec::v1::Settings`].
+    #[inline]
+    #[must_use]
+    pub fn export(&self) -> spec::v1::Settings {
+        spec::v1::Settings {
+            delete_confirmation: self.delete_confirmation.clone(),
+            title: self.title.clone()
+        }
+    }
+
+    // Applies the given [`spec::v1::Settings`] to this [`Settings`].
+    ///
+    pub fn apply(&mut self, new: spec::v1::Settings) {
+        self.title = new.title;
+        self.delete_confirmation = new.delete_confirmation;
+    }
+}
+
 impl Default for Settings {
     fn default() -> Settings {
         Settings {
@@ -165,6 +184,9 @@ impl State {
                 }
             }
         }
+
+        let mut settings = self.settings.lock_mut();
+        settings.apply(new.settings);
     }
 
     /// Exports this [`State`] as a [`spec::v1::Spec`].
@@ -172,6 +194,7 @@ impl State {
     #[must_use]
     pub fn export(&self) -> Spec {
         spec::v1::Spec {
+            settings: self.settings.get_cloned().export(),
             restreams: self
                 .restreams
                 .get_cloned()

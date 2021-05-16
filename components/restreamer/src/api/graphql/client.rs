@@ -772,6 +772,7 @@ impl QueriesRoot {
         ids: Vec<RestreamId>,
         context: &Context,
     ) -> Result<Option<String>, graphql::Error> {
+        let settings = context.state().settings.get_cloned().export();
         let restreams = context
             .state()
             .restreams
@@ -783,7 +784,7 @@ impl QueriesRoot {
             .collect::<Vec<_>>();
         (!restreams.is_empty())
             .then(|| {
-                let spec: Spec = spec::v1::Spec { restreams }.into();
+                let spec: Spec = spec::v1::Spec { restreams, settings }.into();
                 serde_json::to_string(&spec).map_err(|e| {
                     anyhow!("Failed to JSON-serialize spec: {}", e).into()
                 })

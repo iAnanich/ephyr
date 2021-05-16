@@ -14,8 +14,13 @@ import { onDestroy } from 'svelte';
   let submitable = false;
   let invalidLine;
   let invalidJson;
+
   onDestroy(
     value.subscribe((v) => {
+
+      invalidLine = '';
+      invalidJson = '';
+
       if (v.multi) {
         submitable = (v.isMultiList() && v.list !== '' && !invalidLine) || (v.isMultiJson() && v.json !== '' && !invalidJson);
       } else {
