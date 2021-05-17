@@ -176,7 +176,8 @@ impl Manager {
         }
 
         let mut new = state.0.clone();
-        let _ = new.insert(playlist.slug.clone(), playlist);
+        let _inserted = new.insert(playlist.slug.clone(), playlist);
+
         self.persist_state(&new).await?;
 
         state.0 = new;
@@ -203,7 +204,7 @@ impl Manager {
         let mut state = self.state.write().await;
 
         let mut new = state.0.clone();
-        let _ = new.remove(slug);
+        let _removed = new.remove(slug);
         self.persist_state(&new).await?;
 
         state.0 = new;
@@ -225,7 +226,7 @@ impl Manager {
 
         let now = Utc::now();
         for playlist in state.0.values_mut() {
-            let _ = playlist.schedule_nginx_vod_module_set(Some(now), 1);
+            let _result = playlist.schedule_nginx_vod_module_set(Some(now), 1);
         }
 
         self.persist_state(&state.0).await

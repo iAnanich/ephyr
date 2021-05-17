@@ -104,7 +104,18 @@ source .envrc
 ```
 
 
+## Release process
 
+By default, each commit in `master` branch deploys to `restreamer-edge` image on [ALLATRA IT Docker Hub].
+
+For release specific version we need to:
+
+1. Update version and description `CHAGNELOG.md`;
+2. Update version in `Cargo.toml`;
+3. Update versions in `docs`;
+4. Add tag `restreamer-v0.0.0` or so;
+5. Push branch with tags.
+6. Add announce in https://t.me/ephyr_updates
 
 
 [DigitalOcean]: https://digitalocean.com
@@ -115,3 +126,4 @@ source .envrc
 [SSH]: https://en.wikipedia.org/wiki/SSH_(Secure_Shell)
 [SRS]: https://github.com/ossrs/srs
 [webpack-dev-server]: https://www.npmjs.com/package/webpack-dev-server
+[ALLATRA IT Docker Hub]: https://hub.docker.com/repository/docker/allatra/ephyr/tags
