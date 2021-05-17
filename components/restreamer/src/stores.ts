@@ -295,7 +295,7 @@ export class RestreamModal implements Writable<RestreamModalState> {
 
 enum Multiple {
   List = 'list',
-  Json = 'json'
+  Json = 'json',
 }
 
 /**

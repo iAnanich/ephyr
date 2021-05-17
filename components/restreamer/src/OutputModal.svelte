@@ -1,6 +1,5 @@
 <script lang="js">
-
-import { onDestroy } from 'svelte';
+  import { onDestroy } from 'svelte';
   import { mutation } from 'svelte-apollo';
 
   import { SetOutput } from './api/graphql/client.graphql';
@@ -17,12 +16,13 @@ import { onDestroy } from 'svelte';
 
   onDestroy(
     value.subscribe((v) => {
-
       invalidLine = '';
       invalidJson = '';
 
       if (v.multi) {
-        submitable = (v.isMultiList() && v.list !== '' && !invalidLine) || (v.isMultiJson() && v.json !== '' && !invalidJson);
+        submitable =
+          (v.isMultiList() && v.list !== '' && !invalidLine) ||
+          (v.isMultiJson() && v.json !== '' && !invalidJson);
       } else {
         submitable = v.url !== '';
         let changed = !v.edit_id;
@@ -76,7 +76,8 @@ import { onDestroy } from 'svelte';
       try {
         JSON.parse(v.json);
       } catch (e) {
-        invalidJson = 'Failed to parse JSON: ' + e.message + '. Please follow the example:';
+        invalidJson =
+          'Failed to parse JSON: ' + e.message + '. Please follow the example:';
       }
     }
   }
@@ -100,10 +101,10 @@ import { onDestroy } from 'svelte';
 
   async function submit() {
     let v = value.get();
-    if(v.multi) {
-      if(v.isMultiList()) {
+    if (v.multi) {
+      if (v.isMultiList()) {
         revalidateList();
-      } else if(v.isMultiJson()) {
+      } else if (v.isMultiJson()) {
         revalidateJson();
       } else {
         throw new Error('Unknown list type');
@@ -116,26 +117,26 @@ import { onDestroy } from 'svelte';
     v = value.get();
     if (v.multi) {
       if (v.isMultiList()) {
-          v.list.split(/\r\n|\r|\n/).forEach((line) => {
-            const vs = line.split(',');
-            let vars = {
-              restream_id: v.restream_id,
-              url: vs[vs.length - 1],
-            };
-            if (vs.length > 1) {
-              vars.label = vs[0];
-            }
-            submit.push(vars);
-          });
-      } else if(v.isMultiJson()) { //
+        v.list.split(/\r\n|\r|\n/).forEach((line) => {
+          const vs = line.split(',');
+          let vars = {
+            restream_id: v.restream_id,
+            url: vs[vs.length - 1],
+          };
+          if (vs.length > 1) {
+            vars.label = vs[0];
+          }
+          submit.push(vars);
+        });
+      } else if (v.isMultiJson()) {
+        //
         try {
-          submit = JSON.parse(v.json.trim()).map(x => ({
-              restream_id: v.restream_id,
-              url: sanitizeUrl(x.url),
-              ... (x.label && {label: sanitizeLabel(x.label)}),
-              ... (x.preview_url && {preview_url: sanitizeUrl(x.preview_url)})
-            }
-          ));
+          submit = JSON.parse(v.json.trim()).map((x) => ({
+            restream_id: v.restream_id,
+            url: sanitizeUrl(x.url),
+            ...(x.label && { label: sanitizeLabel(x.label) }),
+            ...(x.preview_url && { preview_url: sanitizeUrl(x.preview_url) }),
+          }));
         } catch (e) {
           showError('Failed to add ' + variables.url + ':\n' + e.message);
           failed.push(variables);
@@ -153,7 +154,7 @@ import { onDestroy } from 'svelte';
       }
 
       const preview_url = sanitizeUrl(v.preview_url);
-      if(preview_url !== '') {
+      if (preview_url !== '') {
         vars.preview_url = preview_url;
       }
 
@@ -185,17 +186,19 @@ import { onDestroy } from 'svelte';
     }
 
     value.update((v) => {
-      if(v.isMultiList()) {
+      if (v.isMultiList()) {
         v.list = failed
           .map((vars) => {
             return (vars.label ? vars.label + ',' : '') + vars.url;
           })
           .join('\n');
-      } else if(v.isMultiJson()) { //
-        v.json = JSON.stringify(failed.map(x => {
-          const { url, label, preview_url } = x;
-          return { url, label, preview_url };
-        }));
+      } else if (v.isMultiJson()) {
+        v.json = JSON.stringify(
+          failed.map((x) => {
+            const { url, label, preview_url } = x;
+            return { url, label, preview_url };
+          })
+        );
       }
 
       return v;
@@ -220,7 +223,7 @@ import { onDestroy } from 'svelte';
     </div>
 `;
 
-const multiListPlaceholderText = `One line - one address (with optional label):
+  const multiListPlaceholderText = `One line - one address (with optional label):
   label1,rtmp://1...
   rtmp://2...
   label3,rtmp://3..."
@@ -233,15 +236,15 @@ const multiListPlaceholderText = `One line - one address (with optional label):
   { "url": "rtmp://3..." }
 ]
 `;
-
-
 </script>
 
 <template>
   <div class="uk-modal" class:uk-open={$value.visible}>
-    <div class="uk-modal-dialog uk-modal-body"
-         class:is-multi-list={$value.isMultiList()}
-         class:is-multi-json={$value.isMultiJson()}>
+    <div
+      class="uk-modal-dialog uk-modal-body"
+      class:is-multi-list={$value.isMultiList()}
+      class:is-multi-json={$value.isMultiJson()}
+    >
       <h2 class="uk-modal-title">
         {#if !$value.edit_id}
           Add new output destination{$value.multi ? 's' : ''} for re-streaming
@@ -270,7 +273,7 @@ const multiListPlaceholderText = `One line - one address (with optional label):
           </li>
           <li class:uk-active={$value.isMultiJson()}>
             <a href="/" on:click|preventDefault={() => value.switchMultiJson()}
-            >Multiple - Json</a
+              >Multiple - Json</a
             >
           </li>
         </ul>
@@ -291,10 +294,10 @@ const multiListPlaceholderText = `One line - one address (with optional label):
           placeholder="rtmp://..."
         />
         <input
-            class="uk-input"
-            type="text"
-            bind:value={$value.preview_url}
-            placeholder="optional preview url"
+          class="uk-input"
+          type="text"
+          bind:value={$value.preview_url}
+          placeholder="optional preview url"
         />
         <div class="uk-alert">
           Server will publish the input live stream to this address.
@@ -360,18 +363,19 @@ const multiListPlaceholderText = `One line - one address (with optional label):
           class:uk-form-danger={!!invalidLine}
           bind:value={$value.list}
           on:change={revalidateList}
-          placeholder= {multiListPlaceholderText}
+          placeholder={multiListPlaceholderText}
         />
         {@html multipleNoteTemplate}
       </fieldset>
 
       <fieldset class="multi-json-form">
         <textarea
-                class="uk-textarea"
-                class:uk-form-danger={!!invalidJson}
-                bind:value={$value.json}
-                on:change={revalidateJson}
-                placeholder= {multiJsonPlaceholderText}/>
+          class="uk-textarea"
+          class:uk-form-danger={!!invalidJson}
+          bind:value={$value.json}
+          on:change={revalidateJson}
+          placeholder={multiJsonPlaceholderText}
+        />
         {#if !!invalidJson}
           <div class="uk-form-danger json-err">
             <span class="">{invalidJson}</span>
@@ -380,7 +384,7 @@ const multiListPlaceholderText = `One line - one address (with optional label):
                 {multiJsonPlaceholderText}
               </code>
           </pre>
-        </div>
+          </div>
         {/if}
 
         {@html multipleNoteTemplate}

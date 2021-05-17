@@ -171,7 +171,7 @@
         title="Double-click to copy">{value.dst}</span
       >
       {#if value.previewUrl}
-        &nbsp;[<a href="{value.previewUrl}" target="_blank">Preview</a>]
+        &nbsp;[<a href={value.previewUrl} target="_blank">Preview</a>]
       {/if}
     {/if}
 
