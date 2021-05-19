@@ -11,19 +11,19 @@ export function showError(message: string) {
   const win = window as any;
   if (!Boolean(win.copyToClipboard)) {
     win.copyToClipboard = async (message) => {
-      await copyToClipboard(unescape(message));
+      await copyToClipboard(atob(message));
     };
   }
 
   const maxAllowedLength = 300;
-  let escapedMessage = escape(message);
+  let base64Message = btoa(message);
 
   message =
     message.length > maxAllowedLength
       ? `${message.substring(0, maxAllowedLength)} ...`
       : message;
 
-  const htmlMessage = `${message}<button class="uk-icon-link uk-margin-small-left" uk-icon="copy" onclick="copyToClipboard('${escapedMessage}');"></button>`;
+  const htmlMessage = `${message}<button class="uk-icon-link uk-margin-small-left" uk-icon="copy" onclick="copyToClipboard('${base64Message}');"></button>`;
   UIkit.notification(htmlMessage, {
     status: 'danger',
     pos: 'top-right',

@@ -47,6 +47,25 @@ pub struct Settings {
     pub delete_confirmation: Option<bool>,
 }
 
+impl Settings {
+    /// Exports this [`Settings`] as a [`spec::v1::Settings`].
+    #[inline]
+    #[must_use]
+    pub fn export(&self) -> spec::v1::Settings {
+        spec::v1::Settings {
+            delete_confirmation: self.delete_confirmation,
+            title: self.title.clone()
+        }
+    }
+
+    // Applies the given [`spec::v1::Settings`] to this [`Settings`].
+    ///
+    pub fn apply(&mut self, new: spec::v1::Settings) {
+        self.title = new.title;
+        self.delete_confirmation = new.delete_confirmation;
+    }
+}
+
 impl Default for Settings {
     fn default() -> Settings {
         Settings {
@@ -165,6 +184,9 @@ impl State {
                 }
             }
         }
+
+        let mut settings = self.settings.lock_mut();
+        settings.apply(new.settings);
     }
 
     /// Exports this [`State`] as a [`spec::v1::Spec`].
@@ -172,6 +194,7 @@ impl State {
     #[must_use]
     pub fn export(&self) -> Spec {
         spec::v1::Spec {
+            settings: self.settings.get_cloned().export(),
             restreams: self
                 .restreams
                 .get_cloned()
@@ -1444,6 +1467,10 @@ pub struct Output {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub label: Option<Label>,
 
+    /// Url of stream preview.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preview_url: Option<Url>,
+
     /// Volume rate of this `Output`'s audio tracks when mixed with
     /// `Output.mixins`.
     ///
@@ -1479,6 +1506,7 @@ impl Output {
             id: OutputId::random(),
             dst: spec.dst,
             label: spec.label,
+            preview_url: spec.preview_url,
             volume: spec.volume,
             mixins: spec.mixins.into_iter().map(Mixin::new).collect(),
             enabled: spec.enabled,
@@ -1494,6 +1522,7 @@ impl Output {
     pub fn apply(&mut self, new: spec::v1::Output, replace: bool) {
         self.dst = new.dst;
         self.label = new.label;
+        self.preview_url = new.preview_url;
         self.volume = new.volume;
         // Temporary omit changing existing `enabled` value to avoid unexpected
         // breakages of ongoing re-streams.
@@ -1536,6 +1565,7 @@ impl Output {
         spec::v1::Output {
             dst: self.dst.clone(),
             label: self.label.clone(),
+            preview_url: self.preview_url.clone(),
             volume: self.volume,
             mixins: self.mixins.iter().map(Mixin::export).collect(),
             enabled: self.enabled,

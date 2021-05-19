@@ -46,6 +46,7 @@ subscription State {
             id
             dst
             label
+            previewUrl
             volume
             mixins {
                 id
@@ -111,6 +112,7 @@ mutation SetOutput(
     $restream_id: RestreamId!
     $url: OutputDstUrl!
     $label: Label
+    $preview_url: Url
     $mixins: [MixinSrcUrl!]
     $id: OutputId
 ) {
@@ -118,6 +120,7 @@ mutation SetOutput(
         restreamId: $restream_id
         dst: $url
         label: $label
+        previewUrl: $preview_url
         mixins: $mixins
         id: $id
     )

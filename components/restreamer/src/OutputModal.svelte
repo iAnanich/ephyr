@@ -12,10 +12,17 @@
 
   let submitable = false;
   let invalidLine;
+  let invalidJson;
+
   onDestroy(
     value.subscribe((v) => {
+      invalidLine = '';
+      invalidJson = '';
+
       if (v.multi) {
-        submitable = v.list !== '' && !invalidLine;
+        submitable =
+          (v.isMultiList() && v.list !== '' && !invalidLine) ||
+          (v.isMultiJson() && v.json !== '' && !invalidJson);
       } else {
         submitable = v.url !== '';
         let changed = !v.edit_id;
@@ -23,6 +30,7 @@
           changed |=
             v.label !== v.prev_label ||
             v.url !== v.prev_url ||
+            v.preview_url !== v.prev_preview_url ||
             JSON.stringify(v.mix_urls) !== JSON.stringify(v.prev_mix_urls);
         }
         if (v.mix_urls.length > 0) {
@@ -61,6 +69,19 @@
       .join('\n');
   }
 
+  function revalidateJson() {
+    const v = value.get();
+    invalidJson = '';
+    if (v.json.trim()) {
+      try {
+        JSON.parse(v.json);
+      } catch (e) {
+        invalidJson =
+          'Failed to parse JSON: ' + e.message + '. Please follow the example:';
+      }
+    }
+  }
+
   function revalidateList() {
     value.update((v) => {
       v.list = sanitizeList(v.list);
@@ -79,23 +100,49 @@
   }
 
   async function submit() {
-    revalidateList();
+    let v = value.get();
+    if (v.multi) {
+      if (v.isMultiList()) {
+        revalidateList();
+      } else if (v.isMultiJson()) {
+        revalidateJson();
+      } else {
+        throw new Error('Unknown list type');
+      }
+    }
+
     if (!submitable) return;
 
     let submit = [];
-    const v = value.get();
+    v = value.get();
     if (v.multi) {
-      v.list.split(/\r\n|\r|\n/).forEach((line) => {
-        const vs = line.split(',');
-        let vars = {
-          restream_id: v.restream_id,
-          url: vs[vs.length - 1],
-        };
-        if (vs.length > 1) {
-          vars.label = vs[0];
+      if (v.isMultiList()) {
+        v.list.split(/\r\n|\r|\n/).forEach((line) => {
+          const vs = line.split(',');
+          let vars = {
+            restream_id: v.restream_id,
+            url: vs[vs.length - 1],
+          };
+          if (vs.length > 1) {
+            vars.label = vs[0];
+          }
+          submit.push(vars);
+        });
+      } else if (v.isMultiJson()) {
+        //
+        try {
+          submit = JSON.parse(v.json.trim()).map((x) => ({
+            restream_id: v.restream_id,
+            url: sanitizeUrl(x.url),
+            ...(x.label && { label: sanitizeLabel(x.label) }),
+            ...(x.preview_url && { preview_url: sanitizeUrl(x.preview_url) }),
+          }));
+        } catch (e) {
+          showError('Failed to add ' + variables.url + ':\n' + e.message);
+          failed.push(variables);
+          return;
         }
-        submit.push(vars);
-      });
+      }
     } else {
       let vars = {
         restream_id: v.restream_id,
@@ -105,6 +152,12 @@
       if (label !== '') {
         vars.label = label;
       }
+
+      const preview_url = sanitizeUrl(v.preview_url);
+      if (preview_url !== '') {
+        vars.preview_url = preview_url;
+      }
+
       if (v.mix_urls.length > 0) {
         vars.mixins = v.mix_urls;
       }
@@ -126,16 +179,28 @@
         }
       })
     );
+
     if (failed.length < 1) {
       value.close();
       return;
     }
+
     value.update((v) => {
-      v.list = failed
-        .map((vars) => {
-          return (vars.label ? vars.label + ',' : '') + vars.url;
-        })
-        .join('\n');
+      if (v.isMultiList()) {
+        v.list = failed
+          .map((vars) => {
+            return (vars.label ? vars.label + ',' : '') + vars.url;
+          })
+          .join('\n');
+      } else if (v.isMultiJson()) {
+        v.json = JSON.stringify(
+          failed.map((x) => {
+            const { url, label, preview_url } = x;
+            return { url, label, preview_url };
+          })
+        );
+      }
+
       return v;
     });
   }
@@ -149,11 +214,37 @@
     value.removeMixinSlot(i);
     event.currentTarget.checked = true;
   }
+
+  const multipleNoteTemplate = `
+      <div class="uk-alert">
+        Server will publish the input live stream to these addresses.
+        <br />
+        Supported protocols: <code>rtmp://</code>, <code>icecast://</code>
+    </div>
+`;
+
+  const multiListPlaceholderText = `One line - one address (with optional label):
+  label1,rtmp://1...
+  rtmp://2...
+  label3,rtmp://3..."
+`;
+
+  const multiJsonPlaceholderText = `Array of outputs (Fields: 'label' and 'preview_url' are optional) :
+[
+  { "label": "label1", "url": "rtmp://1...", "preview_url": "https://1..." },
+  { "label": "label2", "url": "rtmp://2..." },
+  { "url": "rtmp://3..." }
+]
+`;
 </script>
 
 <template>
   <div class="uk-modal" class:uk-open={$value.visible}>
-    <div class="uk-modal-dialog uk-modal-body" class:is-multi={$value.multi}>
+    <div
+      class="uk-modal-dialog uk-modal-body"
+      class:is-multi-list={$value.isMultiList()}
+      class:is-multi-json={$value.isMultiJson()}
+    >
       <h2 class="uk-modal-title">
         {#if !$value.edit_id}
           Add new output destination{$value.multi ? 's' : ''} for re-streaming
@@ -175,9 +266,14 @@
               >Single</a
             >
           </li>
-          <li class:uk-active={$value.multi}>
-            <a href="/" on:click|preventDefault={() => value.switchMulti()}
-              >Multiple</a
+          <li class:uk-active={$value.isMultiList()}>
+            <a href="/" on:click|preventDefault={() => value.switchMultiList()}
+              >Multiple - list</a
+            >
+          </li>
+          <li class:uk-active={$value.isMultiJson()}>
+            <a href="/" on:click|preventDefault={() => value.switchMultiJson()}
+              >Multiple - Json</a
             >
           </li>
         </ul>
@@ -196,6 +292,12 @@
           type="text"
           bind:value={$value.url}
           placeholder="rtmp://..."
+        />
+        <input
+          class="uk-input"
+          type="text"
+          bind:value={$value.preview_url}
+          placeholder="optional preview url"
         />
         <div class="uk-alert">
           Server will publish the input live stream to this address.
@@ -251,7 +353,7 @@
         {/if}
       </fieldset>
 
-      <fieldset class="multi-form">
+      <fieldset class="multi-list-form">
         {#if !!invalidLine}
           <span class="uk-form-danger line-err">Invalid line {invalidLine}</span
           >
@@ -261,16 +363,31 @@
           class:uk-form-danger={!!invalidLine}
           bind:value={$value.list}
           on:change={revalidateList}
-          placeholder="One line - one address (with optional label):
-label1,rtmp://1...
-rtmp://2...
-label3,rtmp://3..."
+          placeholder={multiListPlaceholderText}
         />
-        <div class="uk-alert">
-          Server will publish the input live stream to these addresses.
-          <br />
-          Supported protocols: <code>rtmp://</code>, <code>icecast://</code>
-        </div>
+        {@html multipleNoteTemplate}
+      </fieldset>
+
+      <fieldset class="multi-json-form">
+        <textarea
+          class="uk-textarea"
+          class:uk-form-danger={!!invalidJson}
+          bind:value={$value.json}
+          on:change={revalidateJson}
+          placeholder={multiJsonPlaceholderText}
+        />
+        {#if !!invalidJson}
+          <div class="uk-form-danger json-err">
+            <span class="">{invalidJson}</span>
+            <pre>
+              <code>
+                {multiJsonPlaceholderText}
+              </code>
+          </pre>
+          </div>
+        {/if}
+
+        {@html multipleNoteTemplate}
       </fieldset>
 
       <button
@@ -294,9 +411,11 @@ label3,rtmp://3..."
       border: none
       padding: 0
 
+      > input
+        margin-bottom: 5px
+
       .uk-form-small
         width: auto
-        margin-bottom: 5px
 
       .uk-textarea
         min-height: 200px
@@ -309,15 +428,27 @@ label3,rtmp://3..."
       .line-err
         display: block
         font-size: 11px
+      .json-err
+        font-size: 11px
+        pre
+          font-size: inherit
 
     .single-form
       display: block
-    .multi-form
+
+    .multi-list-form,.multi-json-form
       display: none
-    .is-multi
+
+    .is-multi-list,.is-multi-json
       .single-form
         display: none
-      .multi-form
+
+    .is-multi-list
+      .multi-list-form
+        display: block
+
+    .is-multi-json
+      .multi-json-form
         display: block
 
     .mix-with

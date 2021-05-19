@@ -8,19 +8,22 @@ use std::collections::HashSet;
 use serde::{de::Error as _, Deserialize, Deserializer, Serialize};
 
 use crate::{serde::is_false, state};
+use url::Url;
 
 /// Shareable (exportable and importable) specification of a [`State`].
 ///
 /// [`State`]: state::State
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Spec {
+    /// [`Settings`] to be performed.
+    pub settings: Settings,
+
     /// [`Restream`]s to be performed.
     #[serde(deserialize_with = "Spec::deserialize_restreams")]
     pub restreams: Vec<Restream>,
 }
 
 impl Spec {
-    /// Deserializes [`Spec::restreams`] ensuring its invariants preserved.
     fn deserialize_restreams<'de, D: Deserializer<'de>>(
         deserializer: D,
     ) -> Result<Vec<Restream>, D::Error> {
@@ -40,6 +43,21 @@ impl Spec {
 
         Ok(restreams)
     }
+}
+
+/// Server's settings.
+///
+/// It keeps different settings not related to restreams but to whole server
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+pub struct Settings {
+    /// Title for the server
+    /// It is used for differentiating servers on UI side if multiple servers
+    /// are used.
+    pub title: Option<String>,
+
+    /// Whether do we need to confirm deletion of inputs and outputs
+    /// If `true` we should confirm deletion, `false` - do not confirm
+    pub delete_confirmation: Option<bool>,
 }
 
 /// Shareable (exportable and importable) specification of a
@@ -226,6 +244,10 @@ pub struct Output {
     /// Optional label of this [`Output`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub label: Option<state::Label>,
+
+    /// Url of stream preview.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preview_url: Option<Url>,
 
     /// Volume rate of this [`Output`]'s audio tracks when mixed with
     /// [`Output::mixins`].

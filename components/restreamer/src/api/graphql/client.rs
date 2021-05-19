@@ -24,6 +24,7 @@ use crate::{
 };
 
 use super::Context;
+use url::Url;
 
 /// Full schema of [`api::graphql::client`].
 ///
@@ -340,6 +341,7 @@ impl MutationsRoot {
         restream_id: RestreamId,
         dst: OutputDstUrl,
         label: Option<Label>,
+        preview_url: Option<Url>,
         mixins: Vec<MixinSrcUrl>,
         id: Option<OutputId>,
         context: &Context,
@@ -374,6 +376,7 @@ impl MutationsRoot {
         let spec = spec::v1::Output {
             dst,
             label,
+            preview_url,
             volume: Volume::ORIGIN,
             mixins: mixins
                 .into_iter()
@@ -769,6 +772,7 @@ impl QueriesRoot {
         ids: Vec<RestreamId>,
         context: &Context,
     ) -> Result<Option<String>, graphql::Error> {
+        let settings = context.state().settings.get_cloned().export();
         let restreams = context
             .state()
             .restreams
@@ -780,7 +784,7 @@ impl QueriesRoot {
             .collect::<Vec<_>>();
         (!restreams.is_empty())
             .then(|| {
-                let spec: Spec = spec::v1::Spec { restreams }.into();
+                let spec: Spec = spec::v1::Spec { settings, restreams }.into();
                 serde_json::to_string(&spec).map_err(|e| {
                     anyhow!("Failed to JSON-serialize spec: {}", e).into()
                 })
