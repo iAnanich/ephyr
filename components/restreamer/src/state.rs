@@ -54,7 +54,7 @@ impl Settings {
     pub fn export(&self) -> spec::v1::Settings {
         spec::v1::Settings {
             delete_confirmation: self.delete_confirmation,
-            title: self.title.clone()
+            title: self.title.clone(),
         }
     }
 

@@ -784,7 +784,11 @@ impl QueriesRoot {
             .collect::<Vec<_>>();
         (!restreams.is_empty())
             .then(|| {
-                let spec: Spec = spec::v1::Spec { settings, restreams }.into();
+                let spec: Spec = spec::v1::Spec {
+                    settings,
+                    restreams,
+                }
+                .into();
                 serde_json::to_string(&spec).map_err(|e| {
                     anyhow!("Failed to JSON-serialize spec: {}", e).into()
                 })
