@@ -907,6 +907,7 @@ mod spec {
         use super::*;
 
         #[tokio::test]
+        #[ignore = "allatra video api is not accessible due to inactivity"]
         async fn parses_valid_request() {
             let req = serde_json::from_str::<api::vod::meta::Clip>(
                 r#"{
@@ -1027,6 +1028,7 @@ mod spec {
         use super::*;
 
         #[tokio::test]
+        #[ignore = "allatra video api is not accessible due to inactivity"]
         async fn parses_valid_request() {
             let slug = PlaylistSlug::new("life").unwrap();
             let req = serde_json::from_str::<api::vod::meta::Playlist>(
@@ -1685,6 +1687,7 @@ mod spec {
             use super::*;
 
             #[tokio::test]
+            #[ignore = "allatra video api is not accessible due to inactivity"]
             async fn considers_drift_for_delayed_requests() {
                 let slug = PlaylistSlug::new("life").unwrap();
                 let req = serde_json::from_str::<api::vod::meta::Playlist>(

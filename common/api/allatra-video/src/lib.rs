@@ -201,6 +201,7 @@ mod spec {
     use super::*;
 
     #[tokio::test]
+    #[ignore = "allatra video api is not accessible due to inactivity"]
     async fn retrieves_truth_of_life() {
         let res = Api::get_videos_yt(&"Q69gFVmrCiI".into()).await;
         assert!(
@@ -241,6 +242,7 @@ mod spec {
     }
 
     #[tokio::test]
+    #[ignore = "allatra video api is not accessible due to inactivity"]
     async fn parses_life_circle() {
         let resp =
             reqwest::get(&format!("{}/videos/yt/0wAtNWA93hM", Api::V1_URL))
@@ -285,6 +287,7 @@ mod spec {
     }
 
     #[tokio::test]
+    #[ignore = "allatra video api is not accessible due to inactivity"]
     async fn parses_vlad_darwin() {
         let resp =
             reqwest::get(&format!("{}/videos/yt/amksbZL9Dyo", Api::V1_URL))
