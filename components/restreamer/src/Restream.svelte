@@ -35,6 +35,7 @@
     : true;
 
   $: allEnabled = value.outputs.every((o) => o.enabled);
+  $: toggleStatusText = allEnabled ? 'Disable' : 'Enable';
 
   $: onlineCount = value.outputs.filter((o) => o.status === 'ONLINE').length;
   $: initCount = value.outputs.filter((o) => o.status === 'INITIALIZING')
@@ -208,12 +209,21 @@
             class="count uk-alert-success">{onlineCount}</a
           >
         {/if}
-        <Toggle
-          id="all-outputs-toggle-{value.id}"
-          checked={allEnabled}
-          title="{allEnabled ? 'Disable' : 'Enable'} all outputs"
-          on:change={toggleAllOutputs}
-        />
+
+        <Confirm let:confirm>
+          <Toggle
+            id="all-outputs-toggle-{value.id}"
+            checked={allEnabled}
+            title="{toggleStatusText} all outputs"
+            confirmFn={confirm}
+            onChangeFn={toggleAllOutputs}
+          />
+          <span slot="title"
+            >{toggleStatusText} all outputs of <code>{value.key}</code> input</span
+          >
+          <span slot="description">Are you sure about it?</span>
+          <span slot="confirm">{toggleStatusText}</span>
+        </Confirm>
       </span>
     {/if}
 

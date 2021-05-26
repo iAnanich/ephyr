@@ -44,6 +44,8 @@
     ? $info.data.info.deleteConfirmation
     : true;
 
+  $: toggleStatusText = value.enabled ? 'Disable' : 'Enable';
+
   // Last used non-zero volume.
   let last_volume = value.volume === 0 ? 100 : value.volume;
 
@@ -142,12 +144,21 @@
       <i class="far fa-edit" title="Edit output" />
     </a>
 
-    <Toggle
-      id="output-toggle-{value.id}"
-      classes="small"
-      checked={value.enabled}
-      on:change={toggle}
-    />
+    <Confirm let:confirm>
+      <Toggle
+        id="output-toggle-{value.id}"
+        classes="small"
+        checked={value.enabled}
+        confirmFn={confirm}
+        onChangeFn={toggle}
+      />
+      <span slot="title"
+        >{toggleStatusText} <code>{value.dst}</code> output</span
+      >
+      <span slot="description">Are you sure about it?</span>
+      <span slot="confirm">{toggleStatusText}</span>
+    </Confirm>
+
     {#if value.status === 'ONLINE'}
       <span><i class="fas fa-circle uk-alert-success" /></span>
     {:else if value.status === 'INITIALIZING'}

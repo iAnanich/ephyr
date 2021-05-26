@@ -6,6 +6,7 @@
   import { showError, copyToClipboard } from './util';
 
   import Toggle from './Toggle.svelte';
+  import Confirm from './Confirm.svelte';
 
   const disableInputMutation = mutation(DisableInput);
   const enableInputMutation = mutation(EnableInput);
@@ -17,6 +18,8 @@
 
   $: isPull = !!value.src && value.src.__typename === 'RemoteInputSrc';
   $: isFailover = !!value.src && value.src.__typename === 'FailoverInputSrc';
+
+  $: toggleStatusText = value.enabled ? 'Disable' : 'Enable';
 
   async function toggle() {
     const variables = { restream_id, input_id: value.id };
@@ -34,11 +37,20 @@
 
 <template>
   <div class="input">
-    <Toggle
-      id="input-toggle-{value.id}"
-      checked={value.enabled}
-      on:change={toggle}
-    />
+    <Confirm let:confirm>
+      <Toggle
+        id="input-toggle-{value.id}"
+        checked={value.enabled}
+        confirmFn={confirm}
+        onChangeFn={toggle}
+      />
+      <span slot="title"
+        >{toggleStatusText} <code>{restream_key}</code> input</span
+      >
+      <span slot="description">Are you sure about it?</span>
+      <span slot="confirm">{toggleStatusText}</span>
+    </Confirm>
+
     {#each value.endpoints as endpoint}
       <span class="endpoint">
         <span
