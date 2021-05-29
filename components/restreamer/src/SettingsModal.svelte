@@ -1,9 +1,8 @@
 <script lang="js">
   import { mutation } from 'svelte-apollo';
-
   import { SetSettings } from './api/graphql/client.graphql';
-
   import { showError } from './util';
+  import { saveOrCloseByKeys } from './directives';
 
   const setSettingsMutation = mutation(SetSettings);
 
@@ -25,7 +24,10 @@
 </script>
 
 <template>
-  <div class="uk-modal" class:uk-open={visible}>
+  <div
+    class="uk-modal uk-open"
+    use:saveOrCloseByKeys={{ save: submit_change, close: close }}
+  >
     <div class="uk-modal-dialog uk-modal-body">
       <h2 class="uk-modal-title">Change settings</h2>
       <button

@@ -7,7 +7,7 @@
   export let confirmFn: (onSuccess: () => void) => void;
   export let onChangeFn: () => unknown;
 
-  let domElement;
+  let domElement: HTMLInputElement;
 
   function onChange() {
     if (confirmFn) {
