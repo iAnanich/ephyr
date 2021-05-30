@@ -47,8 +47,21 @@
             class="uk-checkbox"
             bind:checked={info.deleteConfirmation}
             type="checkbox"
-          /> Delete confirmation for inputs and outputs</label
+          /> Confirm deletion</label
         >
+        <div class="uk-alert">
+          Whether do we need to confirm deletion of inputs and outputs
+        </div>
+        <label
+          ><input
+            class="uk-checkbox"
+            bind:checked={info.enableConfirmation}
+            type="checkbox"
+          /> Confirm enabling/disabling</label
+        >
+        <div class="uk-alert">
+          Whether do we need to confirm enabling/disabling of inputs or outputs
+        </div>
       </fieldset>
 
       <button class="uk-button uk-button-primary" on:click={submit_change}

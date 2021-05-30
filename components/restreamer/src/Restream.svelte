@@ -34,6 +34,10 @@
     ? $info.data.info.deleteConfirmation
     : true;
 
+  $: enableConfirmation = $info.data
+    ? $info.data.info.enableConfirmation
+    : true;
+
   $: allEnabled = value.outputs.every((o) => o.enabled);
   $: toggleStatusText = allEnabled ? 'Disable' : 'Enable';
 
@@ -215,7 +219,7 @@
             id="all-outputs-toggle-{value.id}"
             checked={allEnabled}
             title="{toggleStatusText} all outputs"
-            confirmFn={confirm}
+            confirmFn={enableConfirmation ? confirm : undefined}
             onChangeFn={toggleAllOutputs}
           />
           <span slot="title"

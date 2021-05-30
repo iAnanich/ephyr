@@ -1,8 +1,10 @@
 <script lang="js">
-  import { mutation } from 'svelte-apollo';
-
-  import { DisableInput, EnableInput } from './api/graphql/client.graphql';
-
+  import { mutation, subscribe } from 'svelte-apollo';
+  import {
+    DisableInput,
+    EnableInput,
+    Info,
+  } from './api/graphql/client.graphql';
   import { showError, copyToClipboard } from './util';
 
   import Toggle from './Toggle.svelte';
@@ -10,6 +12,8 @@
 
   const disableInputMutation = mutation(DisableInput);
   const enableInputMutation = mutation(EnableInput);
+
+  const info = subscribe(Info, { errorPolicy: 'all' });
 
   export let public_host = 'localhost';
   export let restream_id;
@@ -20,6 +24,10 @@
   $: isFailover = !!value.src && value.src.__typename === 'FailoverInputSrc';
 
   $: toggleStatusText = value.enabled ? 'Disable' : 'Enable';
+
+  $: enableConfirmation = $info.data
+    ? $info.data.info.enableConfirmation
+    : true;
 
   async function toggle() {
     const variables = { restream_id, input_id: value.id };
@@ -41,7 +49,7 @@
       <Toggle
         id="input-toggle-{value.id}"
         checked={value.enabled}
-        confirmFn={confirm}
+        confirmFn={enableConfirmation ? confirm : undefined}
         onChangeFn={toggle}
       />
       <span slot="title"

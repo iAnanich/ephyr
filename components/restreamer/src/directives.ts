@@ -3,7 +3,10 @@ export type SaveOrCloseHandlers = {
   close: () => void;
 };
 
-export const saveOrCloseByKeys = (node: HTMLElement, params: SaveOrCloseHandlers) => {
+export const saveOrCloseByKeys = (
+  node: HTMLElement,
+  params: SaveOrCloseHandlers
+) => {
   const keyPressEventName = 'keypress';
   const keyDownEventName = 'keydown';
 

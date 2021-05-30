@@ -44,6 +44,10 @@
     ? $info.data.info.deleteConfirmation
     : true;
 
+  $: enableConfirmation = $info.data
+    ? $info.data.info.enableConfirmation
+    : true;
+
   $: toggleStatusText = value.enabled ? 'Disable' : 'Enable';
 
   // Last used non-zero volume.
@@ -149,7 +153,7 @@
         id="output-toggle-{value.id}"
         classes="small"
         checked={value.enabled}
-        confirmFn={confirm}
+        confirmFn={enableConfirmation ? confirm : undefined}
         onChangeFn={toggle}
       />
       <span slot="title"
