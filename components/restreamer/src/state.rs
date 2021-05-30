@@ -193,10 +193,10 @@ impl State {
         }
 
         let mut settings = self.settings.lock_mut();
-        if new.settings.is_some() {
-            settings.apply(new.settings.unwrap());
-        } else if replace {
-            settings.apply(Settings::default().export());
+        if new.settings.is_some() || replace {
+            settings.apply(
+                new.settings.unwrap_or_else(|| Settings::default().export()),
+            );
         }
     }
 
