@@ -1,15 +1,16 @@
 <script lang="js">
   import { mutation, subscribe } from 'svelte-apollo';
+
   import {
     DisableInput,
     EnableInput,
     Info,
   } from './api/graphql/client.graphql';
+
   import { showError } from './util';
 
   import Toggle from './Toggle.svelte';
   import Confirm from './Confirm.svelte';
-
   import Url from './Url.svelte';
 
   const disableInputMutation = mutation(DisableInput);
@@ -67,7 +68,6 @@
       <span slot="description">Are you sure about it?</span>
       <span slot="confirm">{toggleStatusText}</span>
     </Confirm>
-
     <div class="endpoints">
       {#each value.endpoints as endpoint}
         <div class="endpoint">
@@ -134,6 +134,7 @@
   .fa-arrow-down, .fa-arrow-right
     font-size: 14px
     cursor: help
+
   .fa-circle, .fa-dot-circle
     font-size: 13px
     cursor: help
@@ -141,10 +142,13 @@
   .input
     display: flex;
     align-items: baseline;
+
   .endpoints
     margin-left: 4px
+
   .endpoint
     display: flex
+
   .endpoint .endpoint-status-icon
     margin-right: 5px
 </style>
