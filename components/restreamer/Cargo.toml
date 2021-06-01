@@ -1,15 +1,16 @@
 [package]
 name = "ephyr-restreamer"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2018"
 authors = ["Kai Ren <tyranron@gmail.com>"]
 publish = false
 default-run = "ephyr-restreamer"
 
 [dependencies]
-actix-service = "1.0"
-actix-web = "3.3"
-actix-web-httpauth = "0.5"
+actix-service = "2.0"
+actix-web = "4.0.0-beta.6"
+#actix-web-httpauth = "0.6.0-beta.1" use working fork
+# https://github.com/actix/actix-extras/issues/176#issuecomment-830658605
 actix-web-static-files = "3.0"
 anyhow = "1.0"
 argon2 = { version = "0.8", package = "rust-argon2", default-features = false }
@@ -47,13 +48,16 @@ uuid = { version = "0.8", features = ["serde", "v4"] }
     features = ["fs", "io-util", "process", "rt", "sync", "time"]
 [dependencies.tsclientlib]
     git = "https://github.com/ReSpeak/tsclientlib"
-    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+    rev = "c7fa1c070b8ea0d56530ffba530b86df9b3a377a" # ver = "0.2.0"
 [dependencies.tsproto-packets]
     git = "https://github.com/ReSpeak/tsclientlib"
-    rev = "d85e08d6e4d088c9d19b9958578aaf7df9cbcbac" # branch = "master"
+    rev = "c7fa1c070b8ea0d56530ffba530b86df9b3a377a" # ver = "0.2.0"
 [dependencies.zeromq]
     git = "https://github.com/zeromq/zmq.rs"
     rev = "ad9ee2c3d46e6b90c91827dcb7760b7a28071b97" # tokio = "1.0"
+[dependencies.actix-web-httpauth]
+    git = "https://github.com/near/actix-extras"
+    rev = "cdae476d490b4e79f73cf7ea583237272bcc2e1c"
 
 [build-dependencies]
 anyhow = "1.0"

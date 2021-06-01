@@ -1098,11 +1098,11 @@ impl Mixin {
                     let identity = query.get("identityId").map_or_else(
                         || {
                             log::debug!("No identityId use random");
-                            Identity::create()
+                            Ok(Identity::create())
                         },
                         |v| {
                             log::debug!("Create Identity for: {}", v);
-                            Identity::new_from_str("42VeP4pQAky4r+nmCrlGAUCReG3ZW5zE3lAcHEDfiUae3oBcHJ1ekRvUyR1DS9fKXtIBmF8U1VxSR9UWm0ie2l0Q1NoVnZVVn58LBdjUDYJTixnZgZFIHtCN0IHfHxWNVx1JkZzeEJPTnJLUUloQUxSVlFqNjlDeWRnS0Y5UE5rdVJqMXdLczU2OXdnUHpwZTUyeFhERHVBTDk=")
+                            Identity::new_from_str(v)
                         },
                     );
 
